@@ -1,0 +1,22 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.7;
+  color: rgb(99, 99, 99);
+  padding: 30px;
+  background-image: linear-gradient(
+      to right bottom,
+      rgba(31, 207, 219, 0.5),
+      rgba(25, 210, 216, 0.5)
+    ),
+    url(../../frontend/src/img/nat-10.jpg);
+  background-size: cover;
+  background-position: top;
+}

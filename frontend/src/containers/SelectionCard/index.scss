@@ -1,0 +1,62 @@
+.showUp {
+  animation-name: movefromup;
+  animation-duration: 3000ms;
+}
+
+.showDown {
+  animation-name: movefromdown;
+  animation-duration: 3000ms;
+}
+
+.current-border {
+  border: 2px solid;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.stat-border {
+  border: 2px solid;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.stat-equal {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+@keyframes movefromdown {
+  0% {
+    opacity: 0;
+    transform: translateY(500px);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: translateY(-50px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(0);
+  }
+}
+
+@keyframes movefromup {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: translateY(50px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(0);
+  }
+}

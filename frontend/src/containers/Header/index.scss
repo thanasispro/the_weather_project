@@ -1,0 +1,46 @@
+.header {
+  min-height: 8vh;
+  width: 100%;
+  margin-bottom: 2vh;
+  background-color: whitesmoke;
+  text-transform: uppercase;
+  .title {
+    display: block;
+    font-size: 45px;
+    font-weight: 400;
+    letter-spacing: 10px;
+    text-align: center;
+    animation-name: showup;
+    animation-duration: 2000ms;
+  }
+}
+
+@keyframes showup {
+  0% {
+    opacity: 1;
+  }
+
+  12% {
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 0.2;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  63% {
+    opacity: 0.2;
+  }
+
+  75% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
