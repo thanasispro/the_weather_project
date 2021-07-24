@@ -1,0 +1,25 @@
+{
+  "name": "socital-webapp-boilerplate",
+  "version": "1.0.0",
+  "description": "A quick starting point to use for socital tech assignments or a simple webapp",
+  "main": "index.js",
+  "author": "Thanasis G<thanasis@socital.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "frontend/",
+      "backend/"
+    ]
+  },
+  "scripts": {
+    "backend:dev": "cd backend && yarn dev",
+    "frontend:dev": "cd frontend && yarn start",
+    "test": "mocha -r ts-node/register --extension js backend/test/** --recursive --exit -b"
+  },
+  "dependencies": {
+    "mocha": "^9.0.1",
+    "mongodb": "^4.0.1",
+    "yarn": "^1.22.10"
+  }
+}
