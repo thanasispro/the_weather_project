@@ -63,11 +63,10 @@ const App = () => {
           <Grid lg={4} md={3}></Grid>
           <Grid item md={4} sm={12} xs={12}>
             {selected.length >= 8 ? (
-              <div className='eight-text'>
-                 <h2>You can select up to 8 cities</h2>
-                 <h5>Unselected a city to add a new one</h5>
+              <div className="eight-text">
+                <h2>You can select up to 8 cities</h2>
+                <h5>Unselected a city to add a new one</h5>
               </div>
-              
             ) : (
               <AsyncSelect
                 isDisabled={selected.length >= 8}
@@ -78,10 +77,12 @@ const App = () => {
                 defaultOptions={[]}
                 getOptionLabel={(option) => option.city + ", " + option.country}
                 onChange={(value) => {
-                  if (value) {
-                    let newSelects = [...selected, value];
-                    setSelected(newSelects);
-                  }
+                  setTimeout(() => {
+                    if (value) {
+                      let newSelects = [...selected, value];
+                      setSelected(newSelects);
+                    }
+                  }, 2000)
                 }}
                 isOptionDisabled={(option) => {
                   let found = false;
@@ -100,9 +101,13 @@ const App = () => {
         </Grid>
       </div>
       {selected && (
-        <Grid container>
-          <Grid item lg={3} md={3}></Grid>
-          <Grid item lg={6} md={4} xs={12}>
+        <Grid
+          container
+          direction="row"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Grid item xs={8}>
             <Paper>
               {selected.map((data: any) => {
                 let icon;
@@ -119,39 +124,28 @@ const App = () => {
                   />
                 );
               })}
-            </Paper>
+            </Paper>        
           </Grid>
         </Grid>
       )}
-      <div className="select">
-        <Grid
-          container
-          direction="row"
-          justifyContent="center"
-          alignItems="center"
+
+      <Grid
+        container
+        direction="row"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={!selected.length || isLoading}
+          onClick={() => handlePost()}
         >
-          <Grid item xs={2}>
-            <Button
-              variant="contained"
-              color="secondary"
-              disabled={!selected.length || isLoading}
-              onClick={() => setSelected([])}
-            >
-              Clear all
-            </Button>
-          </Grid>
-          <Grid item xs={2}>
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={!selected.length || isLoading}
-              onClick={() => handlePost()}
-            >
-              Check Temperature
-            </Button>
-          </Grid>
-        </Grid>
-      </div>
+          Check Temperature
+        </Button>
+      </Grid>
+
+      <div className="select"></div>
       {isLoading && (
         <Grid container>
           <Grid item xs={12}>
