@@ -9,7 +9,7 @@ function App() {
       <Switch>
         <Container maxWidth="lg">
           <Header></Header>
-          <Route path="/">
+          <Route path="/:type?">
             <HomerPage />
           </Route>
         </Container>

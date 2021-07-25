@@ -23,3 +23,9 @@ export const findAll = async() => {
     const promise = await  axios.get(url + '/selects/selections')
     return promise;
 }
+
+export const mostCommon = async() => {
+    const url = process.env.REACT_APP_BACKEND_URL
+    const promise = await  axios.get(url + '/searches/topSearched')
+    return promise;
+}

@@ -1,11 +1,11 @@
 .showUp {
   animation-name: movefromup;
-  animation-duration: 3000ms;
+  animation-duration: 1000ms;
 }
 
 .showDown {
   animation-name: movefromdown;
-  animation-duration: 3000ms;
+  animation-duration: 1000ms;
 }
 
 .current-border {
@@ -26,6 +26,7 @@
   font-size: 15px;
   font-weight: 600;
 }
+
 
 @keyframes movefromdown {
   0% {

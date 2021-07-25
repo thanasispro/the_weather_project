@@ -6,4 +6,5 @@ router.get('/selections', controller.get_collected_cities);
 router.post('/save/selections', controller.save_last_search);
 
 
+
 module.exports = router;

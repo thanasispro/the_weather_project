@@ -8,3 +8,7 @@ export interface SelectionItem {
     now: number,
     index: number
 }
+
+export type HomepageParam = {
+    type: string;
+};

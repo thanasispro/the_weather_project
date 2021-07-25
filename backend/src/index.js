@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const cityRoutes = require('./routes/cities.route')
 const selectRoutes = require('./routes/selects.route')
+const searchRoutes = require('./routes/search.route')
+
 
 
 app.use(
@@ -27,6 +29,7 @@ app.use((req, res, next) => {
 
 app.use("/cities", cityRoutes);
 app.use("/selects", selectRoutes)
+app.use("/searches", searchRoutes)
 
 app.use((req, res, next) => {
     const error = new Error("Not found");
