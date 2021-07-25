@@ -1,7 +1,7 @@
 import { Button, Chip, Grid, LinearProgress, Paper } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import AsyncSelect from 'react-select/async';
-import { getCities, postCities } from './actions';
+import { getCities, postCities, saveLastSelection, findAll } from './actions';
 import './index.scss';
 import SelectionCard from '../SelectionCard';
 
@@ -14,6 +14,15 @@ const App = () => {
   const [showMore, setShowMore] = useState(false);
 
   const showValues = process.env.REACT_APP_SHOW_VALUES || '4';
+
+  useEffect(() => {
+    findAll()
+      .then((res) => {
+        setSelected(res.data ? res.data : []);
+      })
+      .catch(() => {
+      });
+  }, []);
 
   useEffect(() => {}, [selected, results, isLoading, loadDataError, clicked]);
 
@@ -104,7 +113,7 @@ const App = () => {
           </Grid>
         </Grid>
       )}
-
+      <div className='select'></div>
       <Grid
         container
         direction='row'
@@ -118,6 +127,7 @@ const App = () => {
           onClick={() => {
             setClicked(0)
             handlePost(0)
+            saveLastSelection(selected);
           }}
         >
           Check Temperature

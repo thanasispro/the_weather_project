@@ -23,22 +23,10 @@ exports.cities_get_all = async (req, res, next) => {
   }
 };
 
+
 exports.collected_cities = async (req, res) => {
   try {
-    let result = [];
-    await Selects.deleteMany({ id: { $gt: 0 } });
-    req.body.data.forEach((c) => {
-      const { id, latitude, longitude, city, country, countryCode } = c;
-      let select = new Selects({
-        id: id,
-        latitude: latitude,
-        longitude: longitude,
-        city: city,
-        country: country,
-        countryCode: countryCode
-      });
-      select.save();
-    });
+    let result = [];    
     for (const sel of req.body.data) {
       const data = await cityService.aggrate_city_actions(sel);
       result.push(data);
@@ -47,7 +35,6 @@ exports.collected_cities = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(400).send("Api to collect cities is out of service, please contact support team");
-
   }
 };
 
