@@ -14,8 +14,8 @@ exports.save_last_search = async(req, res) => {
   try {
     await selectService.saveSelections(req.body.data);
     res.send('OK');
-  } catch (e) {
+  } catch (err) {
     console.error(err);
-    es.status(400).send('Cannot save last cities');
+    res.status(400).send('Cannot save last cities');
   }
 };

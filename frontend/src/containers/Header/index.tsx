@@ -158,19 +158,19 @@ const Header = () => {
         </div>
         <Divider />
         <List>
-          <ListItem button key='search' onClick={() => history.push({pathname:'/'})}>
+          <ListItem button key='search' onClick={() => history.push({pathname:'/weather'})}>
             <ListItemIcon>
               <SearchIcon></SearchIcon>
             </ListItemIcon>
             <ListItemText primary={'Search'} />
           </ListItem>
-          <ListItem button key='hostory'  onClick={() => history.push({pathname:'/history'})}>
+          <ListItem button key='hostory'  onClick={() => history.push({pathname:'/weather/history'})}>
             <ListItemIcon>
               <HistoryIcon></HistoryIcon>
             </ListItemIcon>
             <ListItemText primary={'Last search'} />
           </ListItem>
-          <ListItem button key='trend' onClick={() => history.push({pathname:'/top'})}>
+          <ListItem button key='trend' onClick={() => history.push({pathname:'/weather/top'})}>
             <ListItemIcon>
               <TrendingUpIcon></TrendingUpIcon>
             </ListItemIcon>
