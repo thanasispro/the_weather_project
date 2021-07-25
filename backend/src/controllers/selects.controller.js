@@ -3,7 +3,6 @@ let selectService = require('../service/selects.service.js')
 exports.get_collected_cities = async(req, res) => {
     try {
      let result = await selectService.selectData()
-     console.log(result)
      res.send(result)
     } catch (err) {
       console.error(err);

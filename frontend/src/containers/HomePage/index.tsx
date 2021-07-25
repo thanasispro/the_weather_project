@@ -1,34 +1,21 @@
-import { Button, Chip, Grid, LinearProgress, Paper } from "@material-ui/core";
-import { useEffect, useState } from "react";
-import AsyncSelect from "react-select/async";
-import { getCities, postCities, findAll } from "./actions";
-import "./index.scss";
-import SelectionCard from "../SelectionCard";
+import { Button, Chip, Grid, LinearProgress, Paper } from '@material-ui/core';
+import { useEffect, useState } from 'react';
+import AsyncSelect from 'react-select/async';
+import { getCities, postCities } from './actions';
+import './index.scss';
+import SelectionCard from '../SelectionCard';
 
 const App = () => {
   const [selected, setSelected] = useState<any>([]);
   const [results, setResults] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [oldDataError, setOldDataError] = useState(false);
   const [loadDataError, setLoadDataError] = useState(false);
+  const [clicked, setClicked] = useState(1);
+  const [showMore, setShowMore] = useState(false);
 
-  useEffect(() => {
-    findAll()
-      .then((res) => {
-        setSelected(res.data ? res.data : []);
-      })
-      .catch(() => {
-        setOldDataError(true);
-      });
-  }, []);
+  const showValues = process.env.REACT_APP_SHOW_VALUES || '4';
 
-  useEffect(() => {}, [
-    selected,
-    results,
-    isLoading,
-    oldDataError,
-    loadDataError,
-  ]);
+  useEffect(() => {}, [selected, results, isLoading, loadDataError, clicked]);
 
   const loadOptions = async (inputValue: string) => {
     let chank: any[] = [];
@@ -42,12 +29,13 @@ const App = () => {
     return chank;
   };
 
-  const handlePost = () => {
+  const handlePost = (value: number) => {
     setLoadDataError(false);
     setIsLoading(true);
-    postCities(selected)
-      .then((res) => {
-        setResults(res.data);
+    setShowMore(selected.length > value*parseInt(showValues) + parseInt(showValues))
+    postCities(selected.slice(value === 0 ? 0 : value*parseInt(showValues), value*parseInt(showValues) + parseInt(showValues)))
+      .then((res:any) => {
+        setResults(value === 0 ? res.data : [...results].concat(res.data));
         setIsLoading(false);
       })
       .catch(() => {
@@ -58,54 +46,42 @@ const App = () => {
 
   return (
     <div>
-      <div className="select">
+      <div className='select'>
         <Grid container>
           <Grid lg={4} md={3}></Grid>
           <Grid item md={4} sm={12} xs={12}>
-            {selected.length >= 8 ? (
-              <div className="eight-text">
-                <h2>You can select up to 8 cities</h2>
-                <h5>Unselected a city to add a new one</h5>
-              </div>
-            ) : (
-              <AsyncSelect
-                isDisabled={selected.length >= 8}
-                placeholder="Start typing a city..."
-                value={null}
-                cacheOptions
-                loadOptions={loadOptions}
-                defaultOptions={[]}
-                getOptionLabel={(option) => option.city + ", " + option.country}
-                onChange={(value) => {
-                  setTimeout(() => {
-                    if (value) {
-                      let newSelects = [...selected, value];
-                      setSelected(newSelects);
-                    }
-                  }, 2000)
-                }}
-                isOptionDisabled={(option) => {
-                  let found = false;
-                  selected.forEach((o: any) => {
-                    if (o.id === option.id) {
-                      found = true;
-                    }
-                  });
-                  return found;
-                }}
-              />
-            )}
-
-            {oldDataError && <p>Cannot retrieve your last selections</p>}
+            <AsyncSelect
+              placeholder='Start typing a city...'
+              value={null}
+              cacheOptions
+              loadOptions={loadOptions}
+              defaultOptions={[]}
+              getOptionLabel={(option) => option.city + ', ' + option.country}
+              onChange={(value) => {
+                if (value) {
+                  let newSelects = [...selected, value];
+                  setSelected(newSelects);
+                }
+              }}
+              isOptionDisabled={(option) => {
+                let found = false;
+                selected.forEach((o: any) => {
+                  if (o.id === option.id) {
+                    found = true;
+                  }
+                });
+                return found;
+              }}
+            />
           </Grid>
         </Grid>
       </div>
       {selected && (
         <Grid
           container
-          direction="row"
-          justifyContent="center"
-          alignItems="center"
+          direction='row'
+          justifyContent='center'
+          alignItems='center'
         >
           <Grid item xs={8}>
             <Paper>
@@ -124,28 +100,31 @@ const App = () => {
                   />
                 );
               })}
-            </Paper>        
+            </Paper>
           </Grid>
         </Grid>
       )}
 
       <Grid
         container
-        direction="row"
-        justifyContent="center"
-        alignItems="center"
+        direction='row'
+        justifyContent='center'
+        alignItems='center'
       >
         <Button
-          variant="contained"
-          color="primary"
+          variant='contained'
+          color='primary'
           disabled={!selected.length || isLoading}
-          onClick={() => handlePost()}
+          onClick={() => {
+            setClicked(0)
+            handlePost(0)
+          }}
         >
           Check Temperature
         </Button>
       </Grid>
 
-      <div className="select"></div>
+      <div className='select'></div>
       {isLoading && (
         <Grid container>
           <Grid item xs={12}>
@@ -157,9 +136,9 @@ const App = () => {
       <Grid
         container
         spacing={1}
-        direction="row"
-        justifyContent="flex-start"
-        alignItems="flex-start"
+        direction='row'
+        justifyContent='flex-start'
+        alignItems='flex-start'
       >
         {results &&
           !isLoading &&
@@ -177,6 +156,20 @@ const App = () => {
           ))}
 
         {loadDataError && <p>Error while retrieved data</p>}
+
+        {showMore  && (
+          <Button
+            variant='contained'
+            color='primary'
+            disabled={!selected.length || isLoading}
+            onClick={() => {
+              setClicked(clicked+1)
+              handlePost(clicked+1);
+            }}
+          >
+            SHOW MORE...
+          </Button>
+        )}
       </Grid>
     </div>
   );
