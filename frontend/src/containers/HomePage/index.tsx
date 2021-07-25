@@ -10,8 +10,10 @@ import {
 } from './actions';
 import './index.scss';
 import SelectionCard from '../SelectionCard';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { HomepageParam } from '../../types/types';
+import { useHistory } from 'react-router-dom';
+import Header from '../Header';
 
 const App = () => {
   const [selected, setSelected] = useState<any>([]);
@@ -24,38 +26,51 @@ const App = () => {
   const showValues = process.env.REACT_APP_SHOW_VALUES || '4';
   const { type } = useParams<HomepageParam>();
 
+  const location: any = useLocation();
+
+  let history = useHistory();
+
+  const username = location?.state?.username;
+
   useEffect(() => {
-    setResults([]);
-    setClicked(0);
-    setCheckedTemperatue(false);
-    setShowMore(false);
-    if (!type) {
-      setSelected([]);
-    } else if (type.toUpperCase() === 'TOP') {
-      mostCommon()
-        .then((res) => {
-          setSelected(res.data ? res.data : []);
-          handlePost(0, res.data);
-        })
-        .catch(() => {});
-    } else if (type.toUpperCase() === 'HISTORY') {
-      findAll()
-        .then((res) => {
-          setSelected(res.data ? res.data : []);
-          handlePost(0, res.data);
-        })
-        .catch(() => {});
+    if (!username) {
+      history.push('/');
+    } else {
+      setResults([]);
+      setClicked(0);
+      setCheckedTemperatue(false);
+      setShowMore(false);
+      if (!type) {
+        setSelected([]);
+      } else if (type.toUpperCase() === 'TOP') {
+        mostCommon()
+          .then((res) => {
+            setSelected(res.data ? res.data : []);
+            handlePost(0, res.data);
+          })
+          .catch(() => {});
+      } else if (type.toUpperCase() === 'HISTORY') {
+        findAll(username)
+          .then((res) => {
+            setSelected(res.data ? res.data : []);
+            handlePost(0, res.data);
+          })
+          .catch(() => {});
+      }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
 
-  useEffect(() => {}, [
+  useEffect(() => {
+    console.log(username);
+  }, [
     selected,
     results,
     isLoading,
     loadDataError,
     clicked,
     checkedTemperature,
+    username,
   ]);
 
   const loadOptions = async (inputValue: string) => {
@@ -71,31 +86,35 @@ const App = () => {
   };
 
   const handlePost = (value: number, sel?: any) => {
-    let selection = sel ? sel : selected;
-    setLoadDataError(false);
-    setIsLoading(true);
-    setShowMore(false);
-    setShowMore(
-      selection.length > value * parseInt(showValues) + parseInt(showValues)
-    );
-    postCities(
-      selection.slice(
-        value === 0 ? 0 : value * parseInt(showValues),
-        value * parseInt(showValues) + parseInt(showValues)
+    if (username) {
+      let selection = sel ? sel : selected;
+      setLoadDataError(false);
+      setIsLoading(true);
+      setShowMore(false);
+      setShowMore(
+        selection.length > value * parseInt(showValues) + parseInt(showValues)
+      );
+      postCities(
+        selection.slice(
+          value === 0 ? 0 : value * parseInt(showValues),
+          value * parseInt(showValues) + parseInt(showValues)
+        ),
+        username
       )
-    )
-      .then((res: any) => {
-        setResults(value === 0 ? res.data : [...results].concat(res.data));
-        setIsLoading(false);
-      })
-      .catch(() => {
-        setIsLoading(false);
-        setLoadDataError(true);
-      });
+        .then((res: any) => {
+          setResults(value === 0 ? res.data : [...results].concat(res.data));
+          setIsLoading(false);
+        })
+        .catch(() => {
+          setIsLoading(false);
+          setLoadDataError(true);
+        });
+    } else {history.push('/')};
   };
 
   return (
     <div>
+      <Header username={username}></Header>
       <div className='select'></div>
       {!type && !checkedTemperature && (
         <div>
@@ -169,7 +188,9 @@ const App = () => {
               onClick={() => {
                 setClicked(0);
                 handlePost(0);
-                saveLastSelection(selected);
+                if (username) {
+                  saveLastSelection(selected, username);
+                }
                 setCheckedTemperatue(true);
               }}
             >
@@ -213,34 +234,33 @@ const App = () => {
         {loadDataError && <p>Error while retrieved data</p>}
       </Grid>
       <div className='selects'>
-      {showMore && !isLoading && (
-        <Button
-          variant='contained'
-          color='primary'
-          onClick={() => {
-            setClicked(clicked + 1);
-            handlePost(clicked + 1);
-          }}
-        >
-          SHOW MORE...
-        </Button>
-      )}
-      {checkedTemperature && !isLoading && (
-        <Button
-          variant='contained'
-          color='primary'
-          onClick={() => {
-            setCheckedTemperatue(false);
-            setResults([]);
-            setShowMore(false);
-            setSelected([]);
-          }}
-        >
-          Search Again
-        </Button>
-      )}
+        {showMore && !isLoading && (
+          <Button
+            variant='contained'
+            color='primary'
+            onClick={() => {
+              setClicked(clicked + 1);
+              handlePost(clicked + 1);
+            }}
+          >
+            SHOW MORE...
+          </Button>
+        )}
+        {checkedTemperature && !isLoading && (
+          <Button
+            variant='contained'
+            color='primary'
+            onClick={() => {
+              setCheckedTemperatue(false);
+              setResults([]);
+              setShowMore(false);
+              setSelected([]);
+            }}
+          >
+            Search Again
+          </Button>
+        )}
       </div>
-
     </div>
   );
 };

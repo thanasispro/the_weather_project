@@ -1,16 +1,16 @@
 let Selects = require('../models/selects.model');
 let Search = require('../models/search.model');
 
-export const selectData = async () => {
+export const selectData = async (username) => {
   let selections = [];
-  await Selects.find({}, function (err, selects) {
+  await Selects.find({username: username}, function (err, selects) {
     selections = selects;
   });
   return selections;
 };
 
-export const saveSelections = async (data) => {
-  await Selects.deleteMany({ id: { $gt: 0 } });
+export const saveSelections = async (data, username) => {
+  await Selects.deleteMany({ username: username });
   data.forEach((c) => {
     const { id, latitude, longitude, city, country, countryCode } = c;
     let select = new Selects({
@@ -20,6 +20,7 @@ export const saveSelections = async (data) => {
       city: city,
       country: country,
       countryCode: countryCode,
+      username: username,
     });
     let search = new Search({
         id: id,
@@ -28,6 +29,7 @@ export const saveSelections = async (data) => {
         city: city,
         country: country,
         countryCode: countryCode,
+        username: username
       });
     select.save();
     search.save()

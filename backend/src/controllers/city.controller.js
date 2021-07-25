@@ -4,7 +4,7 @@ const fetch = require("node-fetch");
 let cityService = require('../service/city.service.js')
 let Selects = require("../models/selects.model");
 
-exports.cities_get_all = async (req, res, next) => {
+exports.cities_get_all = async (req, res) => {
   try {
     const { city } = req.params;
     const params = new URLSearchParams({
@@ -28,7 +28,7 @@ exports.collected_cities = async (req, res) => {
   try {
     let result = [];    
     for (const sel of req.body.data) {
-      const data = await cityService.aggrate_city_actions(sel);
+      const data = await cityService.aggrate_city_actions(sel, req.body.username);
       result.push(data);
     }
     res.send(result);

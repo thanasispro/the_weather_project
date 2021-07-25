@@ -7,6 +7,7 @@ let selectsSchema = new Schema({
     city: {type: String, required: true},
     country: {type: String, required: true},
     countryCode: {type: String, required: true},
+    username: {type: String, required: true},
     submitted: {type : Date, default: Date.now}
 });
 module.exports = mongoose.model('Selects', selectsSchema)

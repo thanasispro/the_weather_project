@@ -1,7 +1,7 @@
 let History = require("../models/history.model");
 const fetch = require("node-fetch");
 
-export const aggrate_city_actions = async (city) => {
+export const aggrate_city_actions = async (city, username) => {
   const params = new URLSearchParams({
     lat: city.latitude,
     lon: city.longitude,
@@ -14,10 +14,11 @@ export const aggrate_city_actions = async (city) => {
     id: city.id,
     temperature: apiResponseJson.main.temp,
     countryCode: city.countryCode,
+    username: username
   });
   await history.save();
   let avg = await History.aggregate([
-    { $match: { id: city.id } },
+    { $match: { id: city.id, username: username } },
     {
       $group: {
         _id: "$id",

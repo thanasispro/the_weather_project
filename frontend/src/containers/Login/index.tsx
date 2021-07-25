@@ -39,7 +39,8 @@ const LoginPage = () => {
     if (saveUser) {
       registerUser(data)
         .then((res: any) => {
-          history.push('/weather');
+		  console.log(res)
+          history.push({pathname: '/weather', state: { username: res.data.username }});
         })
         .catch((err) => {
           setErrorMesage(err.response ? err.response.data.error : 'Error');
@@ -47,7 +48,8 @@ const LoginPage = () => {
     } else {
       loginUser(data)
         .then((res: any) => {
-          history.push('/weather');
+			console.log(res)
+          history.push({pathname: '/weather', state: { username: res.data.username }});
         })
         .catch((err) => {
           setErrorMesage(err.response ? err.response.data.error : 'Error');

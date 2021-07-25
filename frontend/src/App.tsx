@@ -9,12 +9,10 @@ function App() {
     <Router>
       <Switch>
         <Container maxWidth="lg">
-          
           <Route exact path="/">
             <LoginPage />
           </Route>
           <Route path="/weather/:type?">
-            <Header></Header>
             <HomerPage />
           </Route>
         </Container>

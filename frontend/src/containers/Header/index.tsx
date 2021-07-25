@@ -91,9 +91,13 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
+type HeaderProps = {
+  username: string
+}
 
-
-const Header = () => {
+const Header = ({
+  username
+}: HeaderProps) => {
 
   const history = useHistory();
 
@@ -158,19 +162,19 @@ const Header = () => {
         </div>
         <Divider />
         <List>
-          <ListItem button key='search' onClick={() => history.push({pathname:'/weather'})}>
+          <ListItem button key='search' onClick={() => history.push({pathname: '/weather', state: { username: username }})}>
             <ListItemIcon>
               <SearchIcon></SearchIcon>
             </ListItemIcon>
             <ListItemText primary={'Search'} />
           </ListItem>
-          <ListItem button key='hostory'  onClick={() => history.push({pathname:'/weather/history'})}>
+          <ListItem button key='hostory'  onClick={() => history.push({pathname: '/weather/history', state: { username: username }})}>
             <ListItemIcon>
               <HistoryIcon></HistoryIcon>
             </ListItemIcon>
             <ListItemText primary={'Last search'} />
           </ListItem>
-          <ListItem button key='trend' onClick={() => history.push({pathname:'/weather/top'})}>
+          <ListItem button key='trend' onClick={() => history.push({pathname: '/weather/top', state: { username: username }})}>
             <ListItemIcon>
               <TrendingUpIcon></TrendingUpIcon>
             </ListItemIcon>
