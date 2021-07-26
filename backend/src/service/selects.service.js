@@ -10,18 +10,8 @@ export const selectData = async (username) => {
 };
 
 export const saveSelections = async (data, username) => {
-  await Selects.deleteMany({ username: username });
   data.forEach((c) => {
     const { id, latitude, longitude, city, country, countryCode } = c;
-    let select = new Selects({
-      id: id,
-      latitude: latitude,
-      longitude: longitude,
-      city: city,
-      country: country,
-      countryCode: countryCode,
-      username: username,
-    });
     let search = new Search({
         id: id,
         latitude: latitude,
@@ -31,7 +21,6 @@ export const saveSelections = async (data, username) => {
         countryCode: countryCode,
         username: username
       });
-    select.save();
     search.save()
   });
 };

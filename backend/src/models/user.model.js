@@ -5,4 +5,6 @@ const UserSchema = new Schema({
   password: { type: String, required: true },
 });
 
+UserSchema.set('timestamps', true); 
+
 module.exports = mongoose.model('UserSchema', UserSchema);

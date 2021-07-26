@@ -8,6 +8,7 @@ let searchSchema = new Schema({
     country: {type: String, required: true},
     countryCode: {type: String, required: true},
     username: {type: String, required: true},
-    submitted: {type : Date, default: Date.now}
 });
+searchSchema.set('timestamps', true); 
+
 module.exports = mongoose.model('Search', searchSchema);

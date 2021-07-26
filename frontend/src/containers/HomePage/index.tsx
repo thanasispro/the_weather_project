@@ -5,21 +5,21 @@ import {
   getCities,
   postCities,
   saveLastSelection,
-  findAll,
   mostCommon,
 } from './actions';
 import './index.scss';
 import SelectionCard from '../SelectionCard';
-import { useLocation, useParams } from 'react-router-dom';
-import { HomepageParam } from '../../types/types';
+import { useParams } from 'react-router-dom';
+import { HomepageParam, SelectionItem } from '../../constants/types/types';
 import { useHistory } from 'react-router-dom';
 import Header from '../Header';
 import { makeStyles } from '@material-ui/core/styles';
 import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
+import { PAGE_TYPE } from '../../constants/types/enum';
 
 const App = () => {
-  const [selected, setSelected] = useState<any>([]);
-  const [results, setResults] = useState<any>([]);
+  const [selected, setSelected] = useState<SelectionItem[]>([]);
+  const [results, setResults] = useState<SelectionItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [loadDataError, setLoadDataError] = useState(false);
   const [clicked, setClicked] = useState(0);
@@ -28,11 +28,9 @@ const App = () => {
   const showValues = process.env.REACT_APP_SHOW_VALUES || '4';
   const { type } = useParams<HomepageParam>();
 
-  const location: any = useLocation();
-
   let history = useHistory();
 
-  const username = location?.state?.username;
+  let username: string | null = localStorage.getItem('username');
 
   const useStyles = makeStyles((theme) => ({
     container: {
@@ -55,15 +53,8 @@ const App = () => {
       setShowMore(false);
       if (!type) {
         setSelected([]);
-      } else if (type.toUpperCase() === 'TOP') {
+      } else if (type.toUpperCase() === PAGE_TYPE.TOP) {
         mostCommon()
-          .then((res) => {
-            setSelected(res.data ? res.data : []);
-            handlePost(0, res.data, false);
-          })
-          .catch(() => {});
-      } else if (type.toUpperCase() === 'HISTORY') {
-        findAll(username)
           .then((res) => {
             setSelected(res.data ? res.data : []);
             handlePost(0, res.data, false);
@@ -74,8 +65,7 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
 
-  useEffect(() => {
-  }, [
+  useEffect(() => {}, [
     selected,
     results,
     isLoading,
@@ -86,23 +76,29 @@ const App = () => {
   ]);
 
   const loadOptions = async (inputValue: string) => {
-    let chank: any[] = [];
+    let optionsToShow: SelectionItem[] = [];
     await getCities(inputValue)
       .then((res) => {
-        chank = res?.data?.data ? res.data.data : [];
+        optionsToShow = res?.data?.data ? res.data.data : [];
       })
       .catch((w) => {
-        return (chank = []);
+        return (optionsToShow = []);
       });
-    return chank;
+    return optionsToShow;
   };
 
-  const handlePost = (value: number, sel: any, saveToDb: boolean) => {
+  const handlePost = (
+    value: number,
+    sel: SelectionItem[] | null,
+    saveToDb: boolean
+  ) => {
     if (username) {
       let selection = sel && selected.length > 0 ? sel : selected;
       setLoadDataError(false);
       setIsLoading(true);
-      setShowMore(selection.length > value * parseInt(showValues) + parseInt(showValues));
+      setShowMore(
+        selection.length > value * parseInt(showValues) + parseInt(showValues)
+      );
       postCities(
         sel
           ? sel
@@ -128,7 +124,7 @@ const App = () => {
 
   return (
     <div>
-      <Header username={username}></Header>
+      <Header></Header>
       <div className='select'></div>
       {!type && !checkedTemperature && (
         <div>
@@ -143,8 +139,8 @@ const App = () => {
                 defaultOptions={[]}
                 getOptionLabel={(option) => option.city + ', ' + option.country}
                 onChange={(value) => {
-                  if (value) {
-                    let newSelects = [...selected, value];
+                  if (value && selected) {
+                    let newSelects: SelectionItem[] = [...selected, value];
                     setSelected(newSelects);
                   }
                 }}
@@ -235,7 +231,7 @@ const App = () => {
           <Grid item xs-={12}>
             <Button
               className={classes.buttonStyle}
-              variant="contained"
+              variant='contained'
               startIcon={<KeyboardBackspaceIcon></KeyboardBackspaceIcon>}
               onClick={() => {
                 setCheckedTemperatue(false);
@@ -244,7 +240,7 @@ const App = () => {
                 setSelected([]);
               }}
             >
-              Search Again
+              New Search
             </Button>
           </Grid>
         </Grid>
@@ -275,20 +271,35 @@ const App = () => {
 
         {loadDataError && <p>Error while retrieved data</p>}
       </Grid>
-      <div className='selects'>
-        {showMore && !type && !isLoading && (
-          <Button
-            color='primary'
-            variant='contained'
-            onClick={() => {
-              setClicked(clicked + 1);
-              handlePost(clicked + 1, null, true);
-            }}
-          >
-            SHOW MORE...
-          </Button>
-        )}
-      </div>
+
+      {showMore && !type && !isLoading && (
+        <Grid
+          container
+          spacing={1}
+          direction='row'
+          justifyContent='center'
+          alignItems='center'
+        >
+          <Grid item xs={12}>
+            <Button
+              className={classes.buttonStyle}
+              color='primary'
+              variant='contained'
+              onClick={() => {
+                setClicked(clicked + 1);
+                handlePost(clicked + 1, null, true);
+              }}
+            >
+              CALCULATE{' '}
+              {selected.length - (clicked + 1) * parseInt(showValues) >
+              parseInt(showValues)
+                ? ' NEXT ' + showValues
+                : ' LAST ' +
+                  (selected.length - (clicked + 1) * parseInt(showValues))}
+            </Button>
+          </Grid>
+        </Grid>
+      )}
     </div>
   );
 };

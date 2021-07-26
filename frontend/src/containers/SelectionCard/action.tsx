@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {SelectionItem} from '../../types/types'
+import {SelectionItem} from '../../constants/types/types'
 
 export const cityData = async(city:SelectionItem) => {
     const url = process.env.REACT_APP_BACKEND_URL

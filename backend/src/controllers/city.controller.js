@@ -1,8 +1,7 @@
-const db = require("../db");
-require("dotenv").config();
-const fetch = require("node-fetch");
-let cityService = require('../service/city.service.js')
-let Selects = require("../models/selects.model");
+const db = require('../db');
+require('dotenv').config();
+const fetch = require('node-fetch');
+let cityService = require('../service/city.service.js');
 
 exports.cities_get_all = async (req, res) => {
   try {
@@ -16,25 +15,32 @@ exports.cities_get_all = async (req, res) => {
     });
     const apiResponse = await fetch(process.env.CITY_URL + params.toString());
     const apiResponseJson = await apiResponse.json();
-    res.send(apiResponseJson);
+    res.status(200).send(apiResponseJson);
   } catch (err) {
-    console.error(err);
-    res.status(400).send("Api to collect cities is out of service, please contact support team");
+    res.status(400).json({
+      status: 'error',
+      error: 'Unexpected error, please contact support team',
+    });
   }
 };
 
-
 exports.collected_cities = async (req, res) => {
   try {
-    let result = [];    
+    let result = [];
     for (const sel of req.body.data) {
-      const data = await cityService.aggrate_city_actions(sel, req.body.username, req.body.saveToDb);
+      const data = await cityService.aggrate_city_actions(
+        sel,
+        req.body.username,
+        req.body.saveToDb
+      );
       result.push(data);
     }
     res.send(result);
   } catch (err) {
     console.error(err);
-    res.status(400).send("Api to collect cities is out of service, please contact support team");
+    res.status(400).json({
+      status: 'error',
+      error: 'Unexpected error, please contact support team',
+    });
   }
 };
-

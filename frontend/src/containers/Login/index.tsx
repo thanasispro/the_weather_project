@@ -9,7 +9,8 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { loginUser, registerUser } from './actions';
 import { useHistory } from 'react-router-dom';
-import './index.scss'
+import './index.scss';
+import Alert from '@material-ui/lab/Alert';
 
 interface FormData {
   username: any;
@@ -29,6 +30,7 @@ const LoginPage = () => {
   const { handleSubmit, register, reset } = useForm<FormData>();
   const [saveUser, setSaveUser] = useState(false);
   const [errorMessage, setErrorMesage] = useState('');
+  const [succesffulyAdded, setSuccefullyAdded] = useState(false);
 
   const history = useHistory();
 
@@ -44,10 +46,11 @@ const LoginPage = () => {
     if (saveUser) {
       registerUser(data)
         .then((res: any) => {
-          history.push({
-            pathname: '/weather',
-            state: { username: res.data.username },
-          });
+          setSuccefullyAdded(true);
+          setTimeout(() => {
+            setSuccefullyAdded(false);
+          }, 3000);
+          setSaveUser(false);
         })
         .catch((err) => {
           setErrorMesage(err.response ? err.response.data.error : 'Error');
@@ -55,10 +58,8 @@ const LoginPage = () => {
     } else {
       loginUser(data)
         .then((res: any) => {
-          history.push({
-            pathname: '/weather',
-            state: { username: res.data.username },
-          });
+          localStorage.setItem('username', res.data.username);
+          history.push('/weather');
         })
         .catch((err) => {
           setErrorMesage(err.response ? err.response.data.error : 'Error');
@@ -71,8 +72,12 @@ const LoginPage = () => {
       <form onSubmit={onSubmit}>
         <Grid container spacing={3}>
           <Grid item xs={12}>
-
             <Grid container spacing={2}>
+              {succesffulyAdded && (
+                <Grid item xs={12}>
+                  <Alert severity='success'>Successfully added</Alert>
+                </Grid>
+              )}
               <Grid item xs={12}>
                 <TextField
                   {...register('username', { required: true })}

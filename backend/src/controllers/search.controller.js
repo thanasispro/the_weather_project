@@ -10,6 +10,9 @@ exports.most_common_searches = async(req, res) => {
 	  res.send(finalResults);
 	} catch (e) {
 	  console.error(err);
-	  es.status(400).send('Cannot save last cities');
+	  res.status(400).json({
+		status: 'error',
+		error: 'Unexpected error, please contact support team',
+	  });
 	}
   };

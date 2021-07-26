@@ -99,11 +99,10 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-type HeaderProps = {
-  username: string;
-};
 
-const Header = ({ username }: HeaderProps) => {
+const Header = () => {
+  let username:any = localStorage.getItem("username")
+
   const history = useHistory();
 
   const classes = useStyles();
@@ -145,8 +144,11 @@ const Header = ({ username }: HeaderProps) => {
           <Typography variant='h5'  className={classes.username}>
             {username}
           </Typography>
-          <Button variant='outlined' color='inherit' onClick={() => history.push('/')}>
-            Login
+          <Button variant='outlined' color='inherit' onClick={() => {
+            history.push('/')
+            localStorage.removeItem("username")
+            }}>
+            Sign out
           </Button>
         </Toolbar>
       </AppBar>
@@ -188,21 +190,6 @@ const Header = ({ username }: HeaderProps) => {
               <SearchIcon></SearchIcon>
             </ListItemIcon>
             <ListItemText primary={'Search'} />
-          </ListItem>
-          <ListItem
-            button
-            key='hostory'
-            onClick={() =>
-              history.push({
-                pathname: '/weather/history',
-                state: { username: username },
-              })
-            }
-          >
-            <ListItemIcon>
-              <HistoryIcon></HistoryIcon>
-            </ListItemIcon>
-            <ListItemText primary={'Last search'} />
           </ListItem>
           <ListItem
             button

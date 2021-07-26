@@ -18,12 +18,6 @@ export const postCities = async(cities:any[], username: string, saveToDb?: boole
     return promise;
 }
 
-export const findAll = async(username:string) => {
-    const url = process.env.REACT_APP_BACKEND_URL
-    const promise = await  axios.get(url + '/selects/selections/' + username)
-    return promise;
-}
-
 export const mostCommon = async() => {
     const url = process.env.REACT_APP_BACKEND_URL
     const promise = await  axios.get(url + '/searches/topSearched')
