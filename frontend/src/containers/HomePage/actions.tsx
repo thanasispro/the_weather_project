@@ -12,9 +12,9 @@ export const saveLastSelection = async(cities:any[], username: string) => {
     return promise
 }
 
-export const postCities = async(cities:any[], username: string) => {
+export const postCities = async(cities:any[], username: string, saveToDb?: boolean) => {
     const url = process.env.REACT_APP_BACKEND_URL
-    const promise = await  axios.post(url + '/cities/cities', {data: cities, username: username})
+    const promise = await  axios.post(url + '/cities/cities', {data: cities, username: username, saveToDb: saveToDb})
     return promise;
 }
 

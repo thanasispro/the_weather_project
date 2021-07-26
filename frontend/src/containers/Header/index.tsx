@@ -24,6 +24,8 @@ import SearchIcon from '@material-ui/icons/Search';
 import HistoryIcon from '@material-ui/icons/History';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import { useHistory } from 'react-router-dom';
+import { Button } from '@material-ui/core';
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
 
 const drawerWidth = 240;
 
@@ -47,8 +49,8 @@ const useStyles = makeStyles((theme: Theme) =>
         duration: theme.transitions.duration.enteringScreen,
       }),
     },
-    menuButton: {
-      marginRight: 36,
+    addButton: {
+      marginRight: theme.spacing(2),
     },
     hide: {
       display: 'none',
@@ -88,17 +90,20 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       padding: theme.spacing(3),
     },
+    title: {
+      flexGrow: 2,
+    },
+    username: {
+      marginRight: '30px'
+    }
   })
 );
 
 type HeaderProps = {
-  username: string
-}
+  username: string;
+};
 
-const Header = ({
-  username
-}: HeaderProps) => {
-
+const Header = ({ username }: HeaderProps) => {
   const history = useHistory();
 
   const classes = useStyles();
@@ -124,18 +129,25 @@ const Header = ({
         <Toolbar>
           <IconButton
             color='inherit'
-            aria-label='open drawer'
+            aria-label='menu'
             onClick={handleDrawerOpen}
             edge='start'
-            className={clsx(classes.menuButton, {
+            className={clsx(classes.addButton, {
               [classes.hide]: open,
             })}
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant='h6' noWrap>
+          <Typography variant='h6' className={classes.title}>
             Check Weather
           </Typography>
+          <AccountBoxIcon fontSize='large' />
+          <Typography variant='h5'  className={classes.username}>
+            {username}
+          </Typography>
+          <Button variant='outlined' color='inherit' onClick={() => history.push('/')}>
+            Login
+          </Button>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -162,19 +174,46 @@ const Header = ({
         </div>
         <Divider />
         <List>
-          <ListItem button key='search' onClick={() => history.push({pathname: '/weather', state: { username: username }})}>
+          <ListItem
+            button
+            key='search'
+            onClick={() =>
+              history.push({
+                pathname: '/weather',
+                state: { username: username },
+              })
+            }
+          >
             <ListItemIcon>
               <SearchIcon></SearchIcon>
             </ListItemIcon>
             <ListItemText primary={'Search'} />
           </ListItem>
-          <ListItem button key='hostory'  onClick={() => history.push({pathname: '/weather/history', state: { username: username }})}>
+          <ListItem
+            button
+            key='hostory'
+            onClick={() =>
+              history.push({
+                pathname: '/weather/history',
+                state: { username: username },
+              })
+            }
+          >
             <ListItemIcon>
               <HistoryIcon></HistoryIcon>
             </ListItemIcon>
             <ListItemText primary={'Last search'} />
           </ListItem>
-          <ListItem button key='trend' onClick={() => history.push({pathname: '/weather/top', state: { username: username }})}>
+          <ListItem
+            button
+            key='trend'
+            onClick={() =>
+              history.push({
+                pathname: '/weather/top',
+                state: { username: username },
+              })
+            }
+          >
             <ListItemIcon>
               <TrendingUpIcon></TrendingUpIcon>
             </ListItemIcon>

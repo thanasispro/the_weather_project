@@ -14,6 +14,8 @@ import { useLocation, useParams } from 'react-router-dom';
 import { HomepageParam } from '../../types/types';
 import { useHistory } from 'react-router-dom';
 import Header from '../Header';
+import { makeStyles } from '@material-ui/core/styles';
+import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
 
 const App = () => {
   const [selected, setSelected] = useState<any>([]);
@@ -32,6 +34,17 @@ const App = () => {
 
   const username = location?.state?.username;
 
+  const useStyles = makeStyles((theme) => ({
+    container: {
+      padding: theme.spacing(3),
+    },
+    buttonStyle: {
+      marginTop: '20px',
+    },
+  }));
+
+  const classes = useStyles();
+
   useEffect(() => {
     if (!username) {
       history.push('/');
@@ -46,14 +59,14 @@ const App = () => {
         mostCommon()
           .then((res) => {
             setSelected(res.data ? res.data : []);
-            handlePost(0, res.data);
+            handlePost(0, res.data, false);
           })
           .catch(() => {});
       } else if (type.toUpperCase() === 'HISTORY') {
         findAll(username)
           .then((res) => {
             setSelected(res.data ? res.data : []);
-            handlePost(0, res.data);
+            handlePost(0, res.data, false);
           })
           .catch(() => {});
       }
@@ -62,7 +75,6 @@ const App = () => {
   }, [type]);
 
   useEffect(() => {
-    console.log(username);
   }, [
     selected,
     results,
@@ -85,21 +97,21 @@ const App = () => {
     return chank;
   };
 
-  const handlePost = (value: number, sel?: any) => {
+  const handlePost = (value: number, sel: any, saveToDb: boolean) => {
     if (username) {
-      let selection = sel ? sel : selected;
+      let selection = sel && selected.length > 0 ? sel : selected;
       setLoadDataError(false);
       setIsLoading(true);
-      setShowMore(false);
-      setShowMore(
-        selection.length > value * parseInt(showValues) + parseInt(showValues)
-      );
+      setShowMore(selection.length > value * parseInt(showValues) + parseInt(showValues));
       postCities(
-        selection.slice(
-          value === 0 ? 0 : value * parseInt(showValues),
-          value * parseInt(showValues) + parseInt(showValues)
-        ),
-        username
+        sel
+          ? sel
+          : selection.slice(
+              value === 0 ? 0 : value * parseInt(showValues),
+              value * parseInt(showValues) + parseInt(showValues)
+            ),
+        username,
+        saveToDb
       )
         .then((res: any) => {
           setResults(value === 0 ? res.data : [...results].concat(res.data));
@@ -109,7 +121,9 @@ const App = () => {
           setIsLoading(false);
           setLoadDataError(true);
         });
-    } else {history.push('/')};
+    } else {
+      history.push('/');
+    }
   };
 
   return (
@@ -152,6 +166,7 @@ const App = () => {
               direction='row'
               justifyContent='center'
               alignItems='center'
+              className={classes.buttonStyle}
             >
               <Grid item xs={8}>
                 <Paper>
@@ -174,12 +189,12 @@ const App = () => {
               </Grid>
             </Grid>
           )}
-          <div className='select'></div>
           <Grid
             container
             direction='row'
             justifyContent='center'
             alignItems='center'
+            className={classes.buttonStyle}
           >
             <Button
               variant='contained'
@@ -187,7 +202,7 @@ const App = () => {
               disabled={!selected.length || isLoading}
               onClick={() => {
                 setClicked(0);
-                handlePost(0);
+                handlePost(0, null, true);
                 if (username) {
                   saveLastSelection(selected, username);
                 }
@@ -209,12 +224,39 @@ const App = () => {
         </Grid>
       )}
 
+      {checkedTemperature && !isLoading && (
+        <Grid
+          container
+          spacing={1}
+          direction='row'
+          justifyContent='flex-start'
+          alignItems='flex-start'
+        >
+          <Grid item xs-={12}>
+            <Button
+              className={classes.buttonStyle}
+              variant="contained"
+              startIcon={<KeyboardBackspaceIcon></KeyboardBackspaceIcon>}
+              onClick={() => {
+                setCheckedTemperatue(false);
+                setResults([]);
+                setShowMore(false);
+                setSelected([]);
+              }}
+            >
+              Search Again
+            </Button>
+          </Grid>
+        </Grid>
+      )}
+
       <Grid
         container
         spacing={1}
         direction='row'
         justifyContent='flex-start'
         alignItems='flex-start'
+        className={classes.buttonStyle}
       >
         {results &&
           !isLoading &&
@@ -234,30 +276,16 @@ const App = () => {
         {loadDataError && <p>Error while retrieved data</p>}
       </Grid>
       <div className='selects'>
-        {showMore && !isLoading && (
+        {showMore && !type && !isLoading && (
           <Button
-            variant='contained'
             color='primary'
+            variant='contained'
             onClick={() => {
               setClicked(clicked + 1);
-              handlePost(clicked + 1);
+              handlePost(clicked + 1, null, true);
             }}
           >
             SHOW MORE...
-          </Button>
-        )}
-        {checkedTemperature && !isLoading && (
-          <Button
-            variant='contained'
-            color='primary'
-            onClick={() => {
-              setCheckedTemperatue(false);
-              setResults([]);
-              setShowMore(false);
-              setSelected([]);
-            }}
-          >
-            Search Again
           </Button>
         )}
       </div>

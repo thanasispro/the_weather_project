@@ -28,7 +28,7 @@ exports.collected_cities = async (req, res) => {
   try {
     let result = [];    
     for (const sel of req.body.data) {
-      const data = await cityService.aggrate_city_actions(sel, req.body.username);
+      const data = await cityService.aggrate_city_actions(sel, req.body.username, req.body.saveToDb);
       result.push(data);
     }
     res.send(result);

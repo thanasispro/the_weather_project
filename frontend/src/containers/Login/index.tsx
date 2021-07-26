@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { loginUser, registerUser } from './actions';
 import { useHistory } from 'react-router-dom';
+import './index.scss'
 
 interface FormData {
   username: any;
@@ -19,17 +20,21 @@ const useStyles = makeStyles((theme) => ({
   container: {
     padding: theme.spacing(3),
   },
+  buttonStyle: {
+    marginTop: '20px',
+  },
 }));
 
 const LoginPage = () => {
-  const { handleSubmit, register } = useForm<FormData>();
+  const { handleSubmit, register, reset } = useForm<FormData>();
   const [saveUser, setSaveUser] = useState(false);
   const [errorMessage, setErrorMesage] = useState('');
 
   const history = useHistory();
 
   useEffect(() => {
-    console.log(errorMessage);
+    reset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [saveUser, errorMessage]);
 
   const classes = useStyles();
@@ -39,8 +44,10 @@ const LoginPage = () => {
     if (saveUser) {
       registerUser(data)
         .then((res: any) => {
-		  console.log(res)
-          history.push({pathname: '/weather', state: { username: res.data.username }});
+          history.push({
+            pathname: '/weather',
+            state: { username: res.data.username },
+          });
         })
         .catch((err) => {
           setErrorMesage(err.response ? err.response.data.error : 'Error');
@@ -48,8 +55,10 @@ const LoginPage = () => {
     } else {
       loginUser(data)
         .then((res: any) => {
-			console.log(res)
-          history.push({pathname: '/weather', state: { username: res.data.username }});
+          history.push({
+            pathname: '/weather',
+            state: { username: res.data.username },
+          });
         })
         .catch((err) => {
           setErrorMesage(err.response ? err.response.data.error : 'Error');
@@ -62,13 +71,6 @@ const LoginPage = () => {
       <form onSubmit={onSubmit}>
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            {errorMessage && (
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <p>{errorMessage}</p>
-                </Grid>
-              </Grid>
-            )}
 
             <Grid container spacing={2}>
               <Grid item xs={12}>
@@ -78,6 +80,7 @@ const LoginPage = () => {
                   label='Username'
                   name='username'
                   size='medium'
+                  onChange={() => setErrorMesage('')}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -88,15 +91,24 @@ const LoginPage = () => {
                   name='password'
                   size='medium'
                   type='password'
+                  onChange={() => setErrorMesage('')}
                 />
               </Grid>
             </Grid>
+            {errorMessage && (
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <p className='error-message'>{errorMessage}</p>
+                </Grid>
+              </Grid>
+            )}
           </Grid>
           <Grid item xs={12}>
             {saveUser ? (
               <Grid container>
                 <Grid item xs={12}>
                   <Button
+                    className={classes.buttonStyle}
                     color='secondary'
                     fullWidth
                     type='submit'
@@ -107,11 +119,12 @@ const LoginPage = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <Button
+                    className={classes.buttonStyle}
                     color='primary'
                     fullWidth
                     type='button'
                     variant='contained'
-                    onClick={() => setSaveUser(false)}
+                    onClick={() => [setSaveUser(false)]}
                   >
                     Cancel
                   </Button>
@@ -121,6 +134,7 @@ const LoginPage = () => {
               <Grid container>
                 <Grid item xs={12}>
                   <Button
+                    className={classes.buttonStyle}
                     color='primary'
                     fullWidth
                     type='submit'
@@ -131,6 +145,7 @@ const LoginPage = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <Button
+                    className={classes.buttonStyle}
                     color='secondary'
                     fullWidth
                     type='button'
