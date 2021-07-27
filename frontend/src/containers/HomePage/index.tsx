@@ -16,12 +16,13 @@ import Header from '../Header';
 import { makeStyles } from '@material-ui/core/styles';
 import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
 import { PAGE_TYPE } from '../../constants/types/enum';
+import { Alert } from '@material-ui/lab';
 
 const App = () => {
   const [selected, setSelected] = useState<SelectionItem[]>([]);
   const [results, setResults] = useState<SelectionItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [loadDataError, setLoadDataError] = useState(false);
+  const [loadDataError, setLoadDataError] = useState('');
   const [clicked, setClicked] = useState(0);
   const [showMore, setShowMore] = useState(false);
   const [checkedTemperature, setCheckedTemperatue] = useState(false);
@@ -47,6 +48,7 @@ const App = () => {
     if (!username) {
       history.push('/');
     } else {
+      setLoadDataError('')
       setResults([]);
       setClicked(0);
       setCheckedTemperatue(false);
@@ -94,7 +96,7 @@ const App = () => {
   ) => {
     if (username) {
       let selection = sel && selected.length > 0 ? sel : selected;
-      setLoadDataError(false);
+      setLoadDataError('');
       setIsLoading(true);
       setShowMore(
         selection.length > value * parseInt(showValues) + parseInt(showValues)
@@ -113,9 +115,9 @@ const App = () => {
           setResults(value === 0 ? res.data : [...results].concat(res.data));
           setIsLoading(false);
         })
-        .catch(() => {
+        .catch((err) => {
           setIsLoading(false);
-          setLoadDataError(true);
+          setLoadDataError(err.response ? err.response.data.error : 'General error');
         });
     } else {
       history.push('/');
@@ -238,6 +240,7 @@ const App = () => {
                 setResults([]);
                 setShowMore(false);
                 setSelected([]);
+                setLoadDataError('')
               }}
             >
               New Search
@@ -269,7 +272,9 @@ const App = () => {
             ></SelectionCard>
           ))}
 
-        {loadDataError && <p>Error while retrieved data</p>}
+        {loadDataError && 
+           <Alert severity="error">{loadDataError}</Alert>
+        }
       </Grid>
 
       {showMore && !type && !isLoading && (

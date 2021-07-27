@@ -13,7 +13,6 @@ exports.get_collected_cities = async (req, res) => {
 
 exports.save_last_search = async(req, res) => {
   try {
-    console.log(req.body.data)
     await selectService.saveSelections(req.body.data, req.body.username);
     res.send('OK');
   } catch (err) {

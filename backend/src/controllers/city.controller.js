@@ -33,6 +33,12 @@ exports.collected_cities = async (req, res) => {
         req.body.username,
         req.body.saveToDb
       );
+      if(!data) {
+        res.status(400).json({
+          status: 'error',
+          error: 'Weather api is out of service',
+        });
+      }
       result.push(data);
     }
     res.send(result);

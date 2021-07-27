@@ -10,6 +10,9 @@ export const aggrate_city_actions = async (city, username, saveToDb) => {
   });
   const apiResponse = await fetch(process.env.WEATHER_API + params.toString());
   const apiResponseJson = await apiResponse.json();
+  if (!apiResponseJson.main) {
+    return null;
+  }
   if (saveToDb) {
     let history = new History({
       id: city.id,
