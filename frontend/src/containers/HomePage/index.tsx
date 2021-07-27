@@ -29,6 +29,7 @@ const App = () => {
   const showValues = process.env.REACT_APP_SHOW_VALUES || '4';
   const { type } = useParams<HomepageParam>();
 
+
   let history = useHistory();
 
   let username: string | null = localStorage.getItem('username');
@@ -68,17 +69,16 @@ const App = () => {
   }, [type]);
 
   useEffect(() => {
-    console.log(selected)
-    console.log(results)
-    if (clicked > 0 && selected.length > results.length) {
-      handlePost(clicked, null, true)
+    if (!type && selected.length > results.length) {
+      handlePost(clicked + 1, null, true)
     } else {
       setShowMore(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [results, clicked, selected, showMore])
+  }, [results])
 
-  useEffect(() => {}, [
+  useEffect(() => {
+  }, [
     selected,
     results,
     isLoading,
@@ -86,6 +86,7 @@ const App = () => {
     clicked,
     checkedTemperature,
     username,
+    showMore
   ]);
 
   const loadOptions = async (inputValue: string) => {
@@ -260,35 +261,6 @@ const App = () => {
           </Grid>
         </Grid>
       )}
-
-      <Grid
-        container
-        spacing={1}
-        direction='row'
-        justifyContent='flex-start'
-        alignItems='flex-start'
-        className={classes.marginTop}
-      >
-        {results &&
-          !isLoading &&
-          results.map((res: any, index: number) => (
-            <SelectionCard
-              city={res.city}
-              country={res.country}
-              max={res.max}
-              min={res.min}
-              avg={res.avg}
-              now={res.now}
-              countryCode={res.countryCode}
-              index={index}
-            ></SelectionCard>
-          ))}
-
-        {loadDataError && 
-           <Alert severity="error">{loadDataError}</Alert>
-        }
-      </Grid>
-
       {showMore && !type && (
         <Grid
           container
@@ -310,6 +282,35 @@ const App = () => {
           </Grid>
         </Grid>
       )}
+
+      <Grid
+        container
+        spacing={1}
+        direction='row'
+        justifyContent='flex-start'
+        alignItems='flex-start'
+        className={classes.marginTop}
+      >
+        {results &&
+          results.map((res: any, index: number) => (
+            <SelectionCard
+              city={res.city}
+              country={res.country}
+              max={res.max}
+              min={res.min}
+              avg={res.avg}
+              now={res.now}
+              countryCode={res.countryCode}
+              index={index}
+            ></SelectionCard>
+          ))}
+
+        {loadDataError && 
+           <Alert severity="error">{loadDataError}</Alert>
+        }
+      </Grid>
+      
+     
     </div>
   );
 };
