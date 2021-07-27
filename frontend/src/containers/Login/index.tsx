@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
     padding: theme.spacing(3),
   },
-  buttonStyle: {
+  marginTop: {
     marginTop: '20px',
   },
 }));
@@ -113,7 +113,7 @@ const LoginPage = () => {
               <Grid container>
                 <Grid item xs={12}>
                   <Button
-                    className={classes.buttonStyle}
+                    className={classes.marginTop}
                     color='secondary'
                     fullWidth
                     type='submit'
@@ -124,7 +124,7 @@ const LoginPage = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <Button
-                    className={classes.buttonStyle}
+                    className={classes.marginTop}
                     color='primary'
                     fullWidth
                     type='button'
@@ -139,7 +139,7 @@ const LoginPage = () => {
               <Grid container>
                 <Grid item xs={12}>
                   <Button
-                    className={classes.buttonStyle}
+                    className={classes.marginTop}
                     color='primary'
                     fullWidth
                     type='submit'
@@ -150,7 +150,7 @@ const LoginPage = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <Button
-                    className={classes.buttonStyle}
+                    className={classes.marginTop}
                     color='secondary'
                     fullWidth
                     type='button'

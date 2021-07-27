@@ -16,7 +16,7 @@ import Header from '../Header';
 import { makeStyles } from '@material-ui/core/styles';
 import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
 import { PAGE_TYPE } from '../../constants/types/enum';
-import { Alert } from '@material-ui/lab';
+import { Alert, AlertTitle } from '@material-ui/lab';
 
 const App = () => {
   const [selected, setSelected] = useState<SelectionItem[]>([]);
@@ -24,8 +24,8 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loadDataError, setLoadDataError] = useState('');
   const [clicked, setClicked] = useState(0);
-  const [showMore, setShowMore] = useState(false);
   const [checkedTemperature, setCheckedTemperatue] = useState(false);
+  const [showMore, setShowMore] = useState(false);
   const showValues = process.env.REACT_APP_SHOW_VALUES || '4';
   const { type } = useParams<HomepageParam>();
 
@@ -37,7 +37,7 @@ const App = () => {
     container: {
       padding: theme.spacing(3),
     },
-    buttonStyle: {
+    marginTop: {
       marginTop: '20px',
     },
   }));
@@ -48,11 +48,11 @@ const App = () => {
     if (!username) {
       history.push('/');
     } else {
+      setShowMore(false);
       setLoadDataError('')
       setResults([]);
       setClicked(0);
       setCheckedTemperatue(false);
-      setShowMore(false);
       if (!type) {
         setSelected([]);
       } else if (type.toUpperCase() === PAGE_TYPE.TOP) {
@@ -66,6 +66,17 @@ const App = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
+
+  useEffect(() => {
+    console.log(selected)
+    console.log(results)
+    if (clicked > 0 && selected.length > results.length) {
+      handlePost(clicked, null, true)
+    } else {
+      setShowMore(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [results, clicked, selected, showMore])
 
   useEffect(() => {}, [
     selected,
@@ -114,6 +125,7 @@ const App = () => {
         .then((res: any) => {
           setResults(value === 0 ? res.data : [...results].concat(res.data));
           setIsLoading(false);
+          setClicked(clicked + 1);
         })
         .catch((err) => {
           setIsLoading(false);
@@ -141,6 +153,7 @@ const App = () => {
                 defaultOptions={[]}
                 getOptionLabel={(option) => option.city + ', ' + option.country}
                 onChange={(value) => {
+                  setClicked(0)
                   if (value && selected) {
                     let newSelects: SelectionItem[] = [...selected, value];
                     setSelected(newSelects);
@@ -164,7 +177,7 @@ const App = () => {
               direction='row'
               justifyContent='center'
               alignItems='center'
-              className={classes.buttonStyle}
+              className={classes.marginTop}
             >
               <Grid item xs={8}>
                 <Paper>
@@ -192,7 +205,7 @@ const App = () => {
             direction='row'
             justifyContent='center'
             alignItems='center'
-            className={classes.buttonStyle}
+            className={classes.marginTop}
           >
             <Button
               variant='contained'
@@ -232,13 +245,12 @@ const App = () => {
         >
           <Grid item xs-={12}>
             <Button
-              className={classes.buttonStyle}
+              className={classes.marginTop}
               variant='contained'
               startIcon={<KeyboardBackspaceIcon></KeyboardBackspaceIcon>}
               onClick={() => {
                 setCheckedTemperatue(false);
                 setResults([]);
-                setShowMore(false);
                 setSelected([]);
                 setLoadDataError('')
               }}
@@ -255,7 +267,7 @@ const App = () => {
         direction='row'
         justifyContent='flex-start'
         alignItems='flex-start'
-        className={classes.buttonStyle}
+        className={classes.marginTop}
       >
         {results &&
           !isLoading &&
@@ -277,7 +289,7 @@ const App = () => {
         }
       </Grid>
 
-      {showMore && !type && !isLoading && (
+      {showMore && !type && (
         <Grid
           container
           spacing={1}
@@ -286,22 +298,15 @@ const App = () => {
           alignItems='center'
         >
           <Grid item xs={12}>
-            <Button
-              className={classes.buttonStyle}
-              color='primary'
-              variant='contained'
-              onClick={() => {
-                setClicked(clicked + 1);
-                handlePost(clicked + 1, null, true);
-              }}
-            >
-              CALCULATE{' '}
+            <Alert  severity="info" className={classes.marginTop} variant="filled">
+                <AlertTitle>Already calculate: {results.length} results of {selected.length}</AlertTitle>
+                CALCULATE{' '}
               {selected.length - (clicked + 1) * parseInt(showValues) >
               parseInt(showValues)
                 ? ' NEXT ' + showValues
                 : ' LAST ' +
                   (selected.length - (clicked + 1) * parseInt(showValues))}
-            </Button>
+            </Alert>
           </Grid>
         </Grid>
       )}
