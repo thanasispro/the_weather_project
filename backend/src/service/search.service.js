@@ -1,6 +1,7 @@
 let Searches = require('../models/search.model');
 
 export const mostCommon = async (limit) => {
+  console.log(limit)
   let searches = await Searches.aggregate([
     {
       $group: {

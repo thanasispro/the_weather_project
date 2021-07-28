@@ -15,9 +15,10 @@
   "scripts": {
     "backend:dev": "cd backend && yarn dev",
     "frontend:dev": "cd frontend && yarn start",
-    "test": "mocha -r ts-node/register --extension js backend/test/** --recursive --exit -b"
+    "test": "mocha -r ts-node/register --extension js  backend/test/** --recursive --exit -b"
   },
   "dependencies": {
+    "dotenv": "^10.0.0",
     "mocha": "^9.0.1",
     "mongodb": "^4.0.1",
     "yarn": "^1.22.10"

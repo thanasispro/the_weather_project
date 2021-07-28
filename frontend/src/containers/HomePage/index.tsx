@@ -67,7 +67,8 @@ const App = () => {
 
   useEffect(() => {
     if (!type && selected.length > results.length) {
-      handlePost(selected.slice(results.length, selected.length + parseInt(showValues)), true);
+      handlePost(selected.slice(results.length, results.length + parseInt(showValues)), true);
+      setShowMore(true);
     } else {
       setShowMore(false);
     }
@@ -76,7 +77,6 @@ const App = () => {
 
   useEffect(() => {}, [
     selected,
-    results,
     isLoading,
     loadDataError,
     checkedTemperature,
@@ -104,10 +104,8 @@ const App = () => {
       let selection = sel ? sel : [];
       setLoadDataError('');
       setIsLoading(true);
-      setShowMore(selection.length > results.length +  parseInt(showValues));
       postCities(selection,username,saveToDb)
         .then((res: any) => {
-          console.log(res)
           setResults(results.length === 0 || type ? res.data : [...results].concat(res.data));
           setIsLoading(false);
         })
@@ -259,7 +257,7 @@ const App = () => {
               variant='filled'
             >
               <AlertTitle>
-                Already calculate: {results.length} results of {selected.length}
+                Already calculate: {results.length} of {selected.length} results
               </AlertTitle>
             </Alert>
           </Grid>

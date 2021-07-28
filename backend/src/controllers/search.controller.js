@@ -8,9 +8,9 @@ exports.most_common_searches = async(req, res) => {
 	  results.forEach((r) => {
 		  finalResults.push(r._id)
 	  })
-	  res.send(finalResults);
+	  res.status(200).json(finalResults);
 	} catch (e) {
-	  console.error(err);
+	  console.error(e);
 	  res.status(400).json({
 		status: 'error',
 		error: 'Unexpected error, please contact support team',

@@ -4,7 +4,6 @@ const fetch = require('node-fetch');
 let cityService = require('../service/city.service.js');
 let User = require('../models/user.model');
 
-
 exports.cities_get_all = async (req, res) => {
   try {
     const { city } = req.params;
@@ -17,7 +16,7 @@ exports.cities_get_all = async (req, res) => {
     });
     const apiResponse = await fetch(process.env.CITY_URL + params.toString());
     const apiResponseJson = await apiResponse.json();
-    res.status(200).send(apiResponseJson);
+    res.status(200).json(apiResponseJson);
   } catch (err) {
     res.status(400).json({
       status: 'error',
@@ -30,7 +29,7 @@ exports.collected_cities = async (req, res) => {
   let result = [];
   let hasError = false;
   try {
-    let user = await User.find({username: req.body.username})
+    let user = await User.find({ username: req.body.username });
     if (!user.length) {
       res.status(400).json({
         status: 'error',
@@ -50,7 +49,7 @@ exports.collected_cities = async (req, res) => {
         result.push(data);
       }
       if (!hasError) {
-        res.send(result);
+        res.status(200).json(result);
       } else {
         res.status(400).json({
           status: 'error',
