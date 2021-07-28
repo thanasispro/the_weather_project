@@ -2,6 +2,8 @@ const db = require('../db');
 require('dotenv').config();
 const fetch = require('node-fetch');
 let cityService = require('../service/city.service.js');
+let User = require('../models/user.model');
+
 
 exports.cities_get_all = async (req, res) => {
   try {
@@ -28,25 +30,33 @@ exports.collected_cities = async (req, res) => {
   let result = [];
   let hasError = false;
   try {
-    for (const sel of req.body.data) {
-      const data = await cityService.aggrate_city_actions(
-        sel,
-        req.body.username,
-        req.body.saveToDb
-      );
-      if (!data) {
-        hasError = true;
-        break;
-      }
-      result.push(data);
-    }
-    if (!hasError) {
-      res.send(result);
-    } else {
+    let user = await User.find({username: req.body.username})
+    if (!user.length) {
       res.status(400).json({
         status: 'error',
-        error: 'Weather api is out of service or wrong data provided',
+        error: 'Unable to find user',
       });
+    } else {
+      for (const sel of req.body.data) {
+        const data = await cityService.aggrate_city_actions(
+          sel,
+          req.body.username,
+          req.body.saveToDb
+        );
+        if (!data) {
+          hasError = true;
+          break;
+        }
+        result.push(data);
+      }
+      if (!hasError) {
+        res.send(result);
+      } else {
+        res.status(400).json({
+          status: 'error',
+          error: 'Weather api is out of service or wrong data provided',
+        });
+      }
     }
   } catch (err) {
     console.error(err);

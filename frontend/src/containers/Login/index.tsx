@@ -49,7 +49,7 @@ const LoginPage = () => {
           setSuccefullyAdded(true);
           setTimeout(() => {
             setSuccefullyAdded(false);
-          }, 3000);
+          }, 5000);
           setSaveUser(false);
         })
         .catch((err) => {
@@ -75,10 +75,15 @@ const LoginPage = () => {
             <Grid container spacing={2}>
               {succesffulyAdded && (
                 <Grid item xs={12}>
-                  <Alert severity='success'>Successfully added</Alert>
+                  <Alert severity='success' variant='filled'>Successfully added</Alert>
                 </Grid>
               )}
-              <Grid item xs={12}>
+              {errorMessage && (
+                <Grid item xs={12}>
+                <Alert severity='error' variant='filled'>{errorMessage}</Alert>
+              </Grid>
+              )}
+              <Grid item xs={12}> 
                 <TextField
                   {...register('username', { required: true })}
                   fullWidth
@@ -100,13 +105,6 @@ const LoginPage = () => {
                 />
               </Grid>
             </Grid>
-            {errorMessage && (
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <p className='error-message'>{errorMessage}</p>
-                </Grid>
-              </Grid>
-            )}
           </Grid>
           <Grid item xs={12}>
             {saveUser ? (

@@ -18,8 +18,8 @@ export const postCities = async(cities:any[], username: string, saveToDb?: boole
     return promise;
 }
 
-export const mostCommon = async() => {
+export const mostCommon = async(limit:number) => {
     const url = process.env.REACT_APP_BACKEND_URL
-    const promise = await  axios.get(url + '/searches/topSearched')
+    const promise = await  axios.get(url + '/searches/topSearched/' + limit)
     return promise;
 }

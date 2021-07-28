@@ -23,12 +23,11 @@ const App = () => {
   const [results, setResults] = useState<SelectionItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [loadDataError, setLoadDataError] = useState('');
-  const [clicked, setClicked] = useState(0);
   const [checkedTemperature, setCheckedTemperatue] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const showValues = process.env.REACT_APP_SHOW_VALUES || '4';
   const { type } = useParams<HomepageParam>();
-
+  let limit = process.env.REACT_APP_TOP_PAGE || '8'
 
   let history = useHistory();
 
@@ -50,17 +49,15 @@ const App = () => {
       history.push('/');
     } else {
       setShowMore(false);
-      setLoadDataError('')
+      setLoadDataError('');
       setResults([]);
-      setClicked(0);
       setCheckedTemperatue(false);
       if (!type) {
         setSelected([]);
       } else if (type.toUpperCase() === PAGE_TYPE.TOP) {
-        mostCommon()
+        mostCommon(parseInt(limit))
           .then((res) => {
-            setSelected(res.data ? res.data : []);
-            handlePost(0, res.data, false);
+            handlePost(res.data, false);
           })
           .catch(() => {});
       }
@@ -70,23 +67,21 @@ const App = () => {
 
   useEffect(() => {
     if (!type && selected.length > results.length) {
-      handlePost(clicked + 1, null, true)
+      handlePost(selected.slice(results.length, selected.length + parseInt(showValues)), true);
     } else {
       setShowMore(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [results])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [results]);
 
-  useEffect(() => {
-  }, [
+  useEffect(() => {}, [
     selected,
     results,
     isLoading,
     loadDataError,
-    clicked,
     checkedTemperature,
     username,
-    showMore
+    showMore,
   ]);
 
   const loadOptions = async (inputValue: string) => {
@@ -102,35 +97,25 @@ const App = () => {
   };
 
   const handlePost = (
-    value: number,
     sel: SelectionItem[] | null,
     saveToDb: boolean
   ) => {
     if (username) {
-      let selection = sel && selected.length > 0 ? sel : selected;
+      let selection = sel ? sel : [];
       setLoadDataError('');
       setIsLoading(true);
-      setShowMore(
-        selection.length > value * parseInt(showValues) + parseInt(showValues)
-      );
-      postCities(
-        sel
-          ? sel
-          : selection.slice(
-              value === 0 ? 0 : value * parseInt(showValues),
-              value * parseInt(showValues) + parseInt(showValues)
-            ),
-        username,
-        saveToDb
-      )
+      setShowMore(selection.length > results.length +  parseInt(showValues));
+      postCities(selection,username,saveToDb)
         .then((res: any) => {
-          setResults(value === 0 ? res.data : [...results].concat(res.data));
+          console.log(res)
+          setResults(results.length === 0 || type ? res.data : [...results].concat(res.data));
           setIsLoading(false);
-          setClicked(clicked + 1);
         })
         .catch((err) => {
           setIsLoading(false);
-          setLoadDataError(err.response ? err.response.data.error : 'General error');
+          setLoadDataError(
+            err.response ? err.response.data.error : 'General error'
+          );
         });
     } else {
       history.push('/');
@@ -154,7 +139,6 @@ const App = () => {
                 defaultOptions={[]}
                 getOptionLabel={(option) => option.city + ', ' + option.country}
                 onChange={(value) => {
-                  setClicked(0)
                   if (value && selected) {
                     let newSelects: SelectionItem[] = [...selected, value];
                     setSelected(newSelects);
@@ -213,8 +197,7 @@ const App = () => {
               color='primary'
               disabled={!selected.length || isLoading}
               onClick={() => {
-                setClicked(0);
-                handlePost(0, null, true);
+                handlePost(selected.slice(0, parseInt(showValues)), true);
                 if (username) {
                   saveLastSelection(selected, username);
                 }
@@ -253,7 +236,7 @@ const App = () => {
                 setCheckedTemperatue(false);
                 setResults([]);
                 setSelected([]);
-                setLoadDataError('')
+                setLoadDataError('');
               }}
             >
               New Search
@@ -270,14 +253,14 @@ const App = () => {
           alignItems='center'
         >
           <Grid item xs={12}>
-            <Alert  severity="info" className={classes.marginTop} variant="filled">
-                <AlertTitle>Already calculate: {results.length} results of {selected.length}</AlertTitle>
-                CALCULATE{' '}
-              {selected.length - (clicked + 1) * parseInt(showValues) >
-              parseInt(showValues)
-                ? ' NEXT ' + showValues
-                : ' LAST ' +
-                  (selected.length - (clicked + 1) * parseInt(showValues))}
+            <Alert
+              severity='info'
+              className={classes.marginTop}
+              variant='filled'
+            >
+              <AlertTitle>
+                Already calculate: {results.length} results of {selected.length}
+              </AlertTitle>
             </Alert>
           </Grid>
         </Grid>
@@ -305,12 +288,8 @@ const App = () => {
             ></SelectionCard>
           ))}
 
-        {loadDataError && 
-           <Alert severity="error">{loadDataError}</Alert>
-        }
+        {loadDataError && <Alert severity='error'>{loadDataError}</Alert>}
       </Grid>
-      
-     
     </div>
   );
 };
