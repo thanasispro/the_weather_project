@@ -9,3 +9,6 @@ yarn-error.log
 .idea
 .vscode
 .nyc_output
+
+frontend/.env
+backend/.env
