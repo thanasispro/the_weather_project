@@ -27,7 +27,7 @@ const App = () => {
   const [showMore, setShowMore] = useState(false);
   const showValues = process.env.REACT_APP_SHOW_VALUES || '4';
   const { type } = useParams<HomepageParam>();
-  let limit = process.env.REACT_APP_TOP_PAGE || '8'
+  let limit = process.env.REACT_APP_TOP_PAGE || '8';
 
   let history = useHistory();
 
@@ -55,6 +55,7 @@ const App = () => {
       if (!type) {
         setSelected([]);
       } else if (type.toUpperCase() === PAGE_TYPE.TOP) {
+        setIsLoading(true)
         mostCommon(parseInt(limit))
           .then((res) => {
             handlePost(res.data, false);
@@ -67,7 +68,10 @@ const App = () => {
 
   useEffect(() => {
     if (!type && selected.length > results.length) {
-      handlePost(selected.slice(results.length, results.length + parseInt(showValues)), true);
+      handlePost(
+        selected.slice(results.length, results.length + parseInt(showValues)),
+        true
+      );
       setShowMore(true);
     } else {
       setShowMore(false);
@@ -96,17 +100,18 @@ const App = () => {
     return optionsToShow;
   };
 
-  const handlePost = (
-    sel: SelectionItem[] | null,
-    saveToDb: boolean
-  ) => {
+  const handlePost = (sel: SelectionItem[] | null, saveToDb: boolean) => {
     if (username) {
       let selection = sel ? sel : [];
       setLoadDataError('');
       setIsLoading(true);
-      postCities(selection,username,saveToDb)
+      postCities(selection, username, saveToDb)
         .then((res: any) => {
-          setResults(results.length === 0 || type ? res.data : [...results].concat(res.data));
+          setResults(
+            results.length === 0 || type
+              ? res.data
+              : [...results].concat(res.data)
+          );
           setIsLoading(false);
         })
         .catch((err) => {
@@ -285,6 +290,26 @@ const App = () => {
               index={index}
             ></SelectionCard>
           ))}
+
+        {results.length === 0 &&
+          type &&
+          !isLoading &&
+          <Grid
+          container
+          direction='row'
+          justifyContent='flex-start'
+          alignItems='flex-start'
+        >
+           <Grid item xs-={12}>
+            <Alert
+              severity='info'
+              variant='filled'
+            >
+              <AlertTitle>No recent searches</AlertTitle>
+            </Alert>
+            </Grid>
+          </Grid>
+        }
 
         {loadDataError && <Alert severity='error'>{loadDataError}</Alert>}
       </Grid>

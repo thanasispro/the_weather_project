@@ -1,0 +1,8 @@
+CITY_URL=http://geodb-free-service.wirefreethought.com/v1/geo/cities?
+CITY_URL_OFFSET=0
+CITY_URL_LIMIT=10
+CITY_URL_SORT=-population
+DB=
+WEATHER_KEY=
+WEATHER_API=http://api.openweathermap.org/data/2.5/weather?
+WEATHER_API_UNITS=metric

@@ -15,7 +15,6 @@ export const aggrate_city_actions = async (city, username, saveToDb) => {
     return null;
   } else {
     if (saveToDb) {
-      console.log(saveToDb)
       let history = new History({
         id: city.id,
         temperature: apiResponseJson.main.temp,
