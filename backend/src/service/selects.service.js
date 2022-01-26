@@ -1,7 +1,7 @@
 let Selects = require('../models/selects.model');
 let Search = require('../models/search.model');
 
-export const selectData = async (username) => {
+exports.selectData = async (username) => {
   let selections = [];
   await Selects.find({username: username}, function (err, selects) {
     selections = selects;
@@ -9,7 +9,7 @@ export const selectData = async (username) => {
   return selections;
 };
 
-export const saveSelections = async (data, username) => {
+exports.saveSelections = async (data, username) => {
   data.forEach((c) => {
     const { id, latitude, longitude, city, country, countryCode } = c;
     let search = new Search({

@@ -5,7 +5,6 @@ import './index.scss';
 
 const SelectionCard: React.FC<SelectionItem> = ({
   city,
-  country,
   countryCode,
   max,
   min,
@@ -21,7 +20,7 @@ const SelectionCard: React.FC<SelectionItem> = ({
       ? (process.env.REACT_APP_CARD_SIZE as CARD_SIZE)
       : CARD_SIZE.MEDIUM;
 
-  const flagSize:string = cardSize === CARD_SIZE.BIG ? '64' : cardSize === CARD_SIZE.MEDIUM ? '48' : '32'
+  const flagSize:string = cardSize === CARD_SIZE.BIG ? '64x48' : cardSize === CARD_SIZE.MEDIUM ? '48x36' : '32x24'
   return (
     <Grid
       item
@@ -39,9 +38,7 @@ const SelectionCard: React.FC<SelectionItem> = ({
               {city}
             </Typography>
             <img
-              src={`${
-                'https://www.countryflags.io/' + countryCode + '/shiny/' + flagSize +  '.png'
-              }`}
+              src={`https://flagcdn.com/${flagSize}/${countryCode?.toLowerCase()}.png`}
               alt='flag'
             ></img>
             <Typography>

@@ -1,7 +1,7 @@
 let History = require('../models/history.model');
 const fetch = require('node-fetch');
 
-export const aggrate_city_actions = async (city, username, saveToDb) => {
+exports.aggrate_city_actions = async (city, username, saveToDb) => {
   let { latitude, longitude } = city;
   const params = new URLSearchParams({
     lat: latitude,
